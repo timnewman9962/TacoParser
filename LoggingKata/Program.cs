@@ -21,6 +21,15 @@ namespace LoggingKata
             // Log and error if you get 0 lines and a warning if you get 1 line
             var lines = File.ReadAllLines(csvPath);
 
+            if (lines == null || lines.Length == 0)
+            {
+                logger.LogError("File has no records");
+                return;
+            }
+
+            if (lines.Length == 1)
+                logger.LogWarning("File has only 1 record");
+
             logger.LogInfo($"Lines: {lines[0]}");
 
             // Create a new instance of your TacoParser class
@@ -35,11 +44,51 @@ namespace LoggingKata
 
             // TODO: Create two `ITrackable` variables with initial values of `null`. These will be used to store your two taco bells that are the farthest from each other.
             // Create a `double` variable to store the distance
+            var track1 = new TacoBell();
+            var pnt1 = new Point();
+            var track2 = new TacoBell();
+            var pnt2 = new Point();
+            double distance = 0;
+            double tempDistance = 0;
 
             // Include the Geolocation toolbox, so you can compare locations: `using GeoCoordinatePortable;`
 
             //HINT NESTED LOOPS SECTION---------------------
             // Do a loop for your locations to grab each location as the origin (perhaps: `locA`)
+            var locA = new GeoCoordinate();
+            var locB = new GeoCoordinate();
+
+            for (int i = 0; i < locations.Length; i++)
+            {
+                locA.Latitude = locations[i].Location.Latitude;
+                locA.Longitude = locations[i].Location.Longitude;
+
+                for (int j = 0; j < locations.Length; j++)
+                {
+                    locB.Latitude = locations[j].Location.Latitude;
+                    locB.Longitude = locations[j].Location.Longitude;
+
+                    tempDistance = locA.GetDistanceTo(locB);
+
+                    if(tempDistance > distance)
+                    {
+                        logger.LogInfo("Updating longer distance");
+
+                        distance = tempDistance;
+
+                        track1.Name = locations[i].Name;
+                        pnt1.Latitude = locations[i].Location.Latitude;
+                        pnt1.Longitude = locations[i].Location.Longitude;
+                        track1.Location = pnt1;
+
+                        track2.Name = locations[j].Name;
+                        pnt2.Latitude = locations[j].Location.Latitude;
+                        pnt2.Longitude = locations[j].Location.Longitude;
+                        track2.Location = pnt2;
+                    }
+                }
+            }
+            logger.LogInfo($"The two farthest Taco Bell stores are in {track1.Name} and {track2.Name} and are {distance * 0.000621371} miles apart");
 
             // Create a new corA Coordinate with your locA's lat and long
 

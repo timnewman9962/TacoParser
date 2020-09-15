@@ -18,6 +18,7 @@
             if (cells.Length < 3)
             {
                 // Log that and return null
+                logger.LogError("Less than 3 elements in record");
                 // Do not fail if one record parsing fails, return null
                 return null; // TODO Implement
             }
@@ -34,11 +35,34 @@
 
             // Then, you'll need an instance of the TacoBell class
             // With the name and point set correctly
+            var tacoBell = new TacoBell();
+
+            double number;
+            Point pnt = new Point();
+
+            if (double.TryParse(cells[0], out number))
+                pnt.Latitude = number;
+            else
+            {
+                logger.LogError("couldn't parse lattitude");
+                return null;
+            }
+
+            if (double.TryParse(cells[1], out number))
+                pnt.Longitude = number;
+            else
+            {
+                logger.LogError("couldn't parse longitude");
+                return null;
+            }
+
+            tacoBell.Location = pnt;
+            tacoBell.Name = cells[2];
 
             // Then, return the instance of your TacoBell class
             // Since it conforms to ITrackable
 
-            return null;
+            return tacoBell;
         }
     }
 }
