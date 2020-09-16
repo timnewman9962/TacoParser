@@ -56,6 +56,12 @@
                 return null;
             }
 
+            if(cells[2] == "")
+            {
+                logger.LogError("name is empty");
+                return null;
+            }
+
             tacoBell.Location = pnt;
             tacoBell.Name = cells[2];
 

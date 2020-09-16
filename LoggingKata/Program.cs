@@ -28,9 +28,11 @@ namespace LoggingKata
             }
 
             if (lines.Length == 1)
+            {
                 logger.LogWarning("File has only 1 record");
+                logger.LogInfo($"Lines: {lines[0]}");
+            }
 
-            logger.LogInfo($"Lines: {lines[0]}");
 
             // Create a new instance of your TacoParser class
             var parser = new TacoParser();
@@ -57,22 +59,28 @@ namespace LoggingKata
             // Do a loop for your locations to grab each location as the origin (perhaps: `locA`)
             var locA = new GeoCoordinate();
             var locB = new GeoCoordinate();
-
-            for (int i = 0; i < locations.Length; i++)
+            logger.LogInfo("Begin searching for furthest distance between Taco Bell stores, starting with 0 miles");
+            for (int i = 0; i < locations.Length - 1; i++)
             {
+                if(locations[i] == null)
+                {
+                    logger.LogWarning("null record detected, skipping");
+                    continue;
+                }
                 locA.Latitude = locations[i].Location.Latitude;
                 locA.Longitude = locations[i].Location.Longitude;
 
-                for (int j = 0; j < locations.Length; j++)
+                for (int j = i + 1; j < locations.Length; j++)
                 {
                     locB.Latitude = locations[j].Location.Latitude;
                     locB.Longitude = locations[j].Location.Longitude;
 
                     tempDistance = locA.GetDistanceTo(locB);
+//                    logger.LogInfo($"checking {locations[i].Name} to {locations[j].Name} miles apart: {Math.Round(tempDistance * 0.000621371, 0)}");
 
                     if(tempDistance > distance)
                     {
-                        logger.LogInfo("Updating longer distance");
+                        logger.LogInfo($"Found longer distance, updating {locations[i].Name} to {locations[j].Name} miles apart: {Math.Round(tempDistance * 0.000621371, 0)}");
 
                         distance = tempDistance;
 
@@ -88,7 +96,7 @@ namespace LoggingKata
                     }
                 }
             }
-            logger.LogInfo($"The two farthest Taco Bell stores are in {track1.Name} and {track2.Name} and are {distance * 0.000621371} miles apart");
+            logger.LogInfo($"The two farthest Taco Bell stores are in {track1.Name} and {track2.Name} and are {Math.Round(distance * 0.000621371, 0)} miles apart");
 
             // Create a new corA Coordinate with your locA's lat and long
 
